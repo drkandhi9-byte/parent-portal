@@ -42,6 +42,12 @@
   .btn:disabled { opacity:.6; }
   .msg { margin-top:10px; color:#b42318; font-weight:700; }
   .hint { color:var(--muted); font-size:13px; margin-top:12px; }
+  input[type=password] { width:100%; padding:12px; border:1px solid #c9cfd9; border-radius:10px; font-family:inherit; background:#fff; }
+  .pinIn { font-size:26px !important; font-weight:800; letter-spacing:14px; text-align:center; }
+  .who { display:flex; justify-content:space-between; align-items:center; gap:8px; background:#eef0f4; border-radius:10px; padding:10px 12px; margin-top:14px; font-weight:700; color:var(--navy); }
+  .note { background:var(--gold-soft); border-left:4px solid var(--gold); border-radius:8px; padding:9px 11px; margin-top:12px; font-size:13px; color:#5b4a12; }
+  .note:empty { display:none; }
+  .lrow { display:flex; justify-content:flex-end; margin-top:6px; }
   /* children */
   .kids { display:flex; gap:10px; overflow-x:auto; padding:2px 0 6px; scrollbar-width:none; }
   .kid { display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); background:#fff; border-radius:14px; padding:8px 14px 8px 8px; cursor:pointer; flex:none; text-align:left; }
@@ -121,12 +127,23 @@
   <div id="loginBox" class="login card">
     <h2 data-t="welcome"></h2>
     <p data-t="sub"></p>
-    <label data-t="sid"></label>
-    <div class="row"><span class="pfx">ESK-</span><input id="sid" type="text" inputmode="numeric" maxlength="6" placeholder="1001" autocomplete="off"></div>
-    <label data-t="mob"></label>
-    <input id="mob" type="tel" inputmode="numeric" maxlength="14" placeholder="98xxxxxxxx" autocomplete="tel">
-    <button class="btn" id="go" data-t="login"></button>
+    <div id="idBox">
+      <label data-t="sid"></label>
+      <div class="row"><span class="pfx">ESK-</span><input id="sid" type="text" inputmode="numeric" maxlength="6" placeholder="1001" autocomplete="username"></div>
+      <label data-t="mob"></label>
+      <input id="mob" type="tel" inputmode="numeric" maxlength="14" placeholder="98xxxxxxxx" autocomplete="tel">
+    </div>
+    <div id="pinBox" style="display:none">
+      <div class="who"><span id="who"></span><button class="link" id="back" data-t="change"></button></div>
+      <label id="pinLbl" for="pin"></label>
+      <input id="pin" class="pinIn" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" autocomplete="current-password">
+      <div id="pin2Wrap"><label data-t="pinConfirm" for="pin2"></label>
+        <input id="pin2" class="pinIn" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" autocomplete="new-password"></div>
+      <div class="note" id="pinHint"></div>
+    </div>
+    <button class="btn" id="go"></button>
     <div class="msg" id="err"></div>
+    <div class="lrow"><button class="link" id="forgot" data-t="forgot" style="display:none"></button></div>
     <div class="hint" data-t="hint"></div>
   </div>
 
@@ -153,13 +170,25 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUA6gC0C7DPK94l9e-SrOHMVg_yXR4Ft6UGJ8eP89Vlc8ULPbtHvxdTdVBoNKq0mOC/exec';
 const T = {
   en: { portal:'Parent Portal', welcome:'Welcome, parents', sub:"See your child's homework and AI review reports.", sid:'Student ID', mob:'Registered mobile number',
-        login:'Log in', checking:'Checking…', hint:'Use the Student ID and mobile number printed on the school parent letter. Brothers and sisters with the same mobile number appear together.',
+        login:'Log in', checking:'Checking…', hint:'Use the Student ID and mobile number printed on the school parent letter, then your family PIN. Brothers and sisters with the same mobile number appear together.',
+        next:'Next', pinEnter:'Your 4-digit family PIN', pinNew:'Create a 4-digit family PIN', pinConfirm:'Type the same PIN again', savePin:'Save PIN & log in', change:'Change',
+        pinNewHint:'First time only. One PIN for all your children. Keep it secret — do not share it with anyone, not even school staff.',
+        forgot:'Forgot PIN?', forgotMsg:'Please contact the school office to reset your PIN. You will create a new PIN at your next login.',
+        pinWrong:'Wrong PIN. {left} attempt(s) left.', pinLocked:'Too many wrong PINs. Please try again after 30 minutes, or contact the school office.',
+        pinFormat:'PIN must be exactly 4 digits.', pinMismatch:'The two PINs do not match.', pinWeak:'This PIN is too easy to guess. Please choose another.',
+        pinMobile:'Please do not use the last 4 digits of your mobile number.', pinExists:'A PIN is already set for this family. Please log in with it.', setupExpired:'Time expired. Please log in again.',
         logout:'Log out', sent:'Homework sent (last 7 days)', ready:'AI reviews ready', waiting:'Waiting for AI review', last:'Last submitted', latest:'Latest AI review',
         open:'Open review', allSub:'All subjects', allDates:'All dates', week:'Last 7 days', month:'This month', pick:'📅 Pick date', given:'Homework given',
         reviewed:'AI reviewed ✓', awaiting:'Awaiting review', page:'Page', ai:'AI Review', empty:'No homework found for this selection.', noHw:'No homework uploaded yet for this child.',
         more:'Show more', loading:'Loading…', save:'Save', close:'Close ✕', updated:'Updated', none:'—', photos:'page(s)' },
   te: { portal:'తల్లిదండ్రుల పోర్టల్', welcome:'తల్లిదండ్రులకు స్వాగతం', sub:'మీ పిల్లల హోంవర్క్ మరియు AI రివ్యూ రిపోర్టులు చూడండి.', sid:'స్టూడెంట్ ID', mob:'రిజిస్టర్డ్ మొబైల్ నంబర్',
-        login:'లాగిన్', checking:'తనిఖీ చేస్తున్నాం…', hint:'స్కూల్ లెటర్‌లో ఉన్న స్టూడెంట్ ID మరియు మొబైల్ నంబర్ వాడండి. ఒకే మొబైల్ నంబర్ ఉన్న అన్నదమ్ములు, అక్కచెల్లెళ్లు కలిసి కనిపిస్తారు.',
+        login:'లాగిన్', checking:'తనిఖీ చేస్తున్నాం…', hint:'స్కూల్ లెటర్‌లో ఉన్న స్టూడెంట్ ID మరియు మొబైల్ నంబర్, తర్వాత మీ కుటుంబ PIN వాడండి. ఒకే మొబైల్ నంబర్ ఉన్న అన్నదమ్ములు, అక్కచెల్లెళ్లు కలిసి కనిపిస్తారు.',
+        next:'తరువాత', pinEnter:'మీ 4 అంకెల కుటుంబ PIN', pinNew:'4 అంకెల కుటుంబ PIN సృష్టించండి', pinConfirm:'అదే PIN మళ్లీ టైప్ చేయండి', savePin:'PIN సేవ్ చేసి లాగిన్', change:'మార్చండి',
+        pinNewHint:'మొదటిసారి మాత్రమే. మీ పిల్లలందరికీ ఒకే PIN. దీన్ని రహస్యంగా ఉంచండి — ఎవరికీ, స్కూల్ సిబ్బందికి కూడా చెప్పవద్దు.',
+        forgot:'PIN మర్చిపోయారా?', forgotMsg:'PIN రీసెట్ కోసం స్కూల్ ఆఫీసును సంప్రదించండి. తదుపరి లాగిన్‌లో కొత్త PIN సృష్టించవచ్చు.',
+        pinWrong:'PIN తప్పు. ఇంకా {left} ప్రయత్నాలు మిగిలాయి.', pinLocked:'చాలా సార్లు తప్పు PIN. 30 నిమిషాల తర్వాత ప్రయత్నించండి, లేదా స్కూల్ ఆఫీసును సంప్రదించండి.',
+        pinFormat:'PIN ఖచ్చితంగా 4 అంకెలు ఉండాలి.', pinMismatch:'రెండు PINలు సరిపోలలేదు.', pinWeak:'ఈ PIN సులభంగా ఊహించవచ్చు. వేరేది ఎంచుకోండి.',
+        pinMobile:'మొబైల్ నంబర్ చివరి 4 అంకెలు PINగా వాడవద్దు.', pinExists:'ఈ కుటుంబానికి PIN ఇప్పటికే ఉంది. దానితో లాగిన్ చేయండి.', setupExpired:'సమయం ముగిసింది. మళ్లీ లాగిన్ చేయండి.',
         logout:'లాగ్ అవుట్', sent:'పంపిన హోంవర్క్ (గత 7 రోజులు)', ready:'AI రివ్యూలు సిద్ధం', waiting:'AI రివ్యూ కోసం వేచి ఉన్నవి', last:'చివరిగా పంపినది', latest:'తాజా AI రివ్యూ',
         open:'రివ్యూ తెరవండి', allSub:'అన్ని సబ్జెక్టులు', allDates:'అన్ని తేదీలు', week:'గత 7 రోజులు', month:'ఈ నెల', pick:'📅 తేదీ ఎంచుకోండి', given:'హోంవర్క్ ఇచ్చిన తేదీ',
         reviewed:'AI రివ్యూ అయింది ✓', awaiting:'రివ్యూ కోసం వేచి ఉంది', page:'పేజీ', ai:'AI రివ్యూ', empty:'ఈ ఎంపికకు హోంవర్క్ లేదు.', noHw:'ఈ పిల్లల హోంవర్క్ ఇంకా అప్‌లోడ్ కాలేదు.',
@@ -180,6 +209,7 @@ function applyLang() {
   document.documentElement.lang = lang;
   $('lnEn').classList.toggle('on', lang === 'en'); $('lnTe').classList.toggle('on', lang === 'te');
   document.querySelectorAll('[data-t]').forEach(el => el.textContent = t(el.dataset.t));
+  stepLabels();
   if (S) render();
 }
 $('lnEn').onclick = () => { lang = 'en'; mem.set('esha_lang','en'); applyLang(); };
@@ -188,21 +218,58 @@ $('lnTe').onclick = () => { lang = 'te'; mem.set('esha_lang','te'); applyLang();
 async function call(body) {
   const r = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body) });
   const j = await r.json();
-  if (!j.ok) throw new Error(j.error || 'Something went wrong');
+  if (!j.ok) {
+    const msg = j.code && T.en[j.code] ? t(j.code).replace(/\{(\w+)\}/g, (m, k) => j[k] != null ? j[k] : m) : (j.error || 'Something went wrong');
+    const e = new Error(msg); e.code = j.code; throw e;
+  }
   return j;
 }
 const pd = d => new Date(d + 'T00:00:00');
 const fmt = (d, o) => { const x = pd(d); return isNaN(x) ? d : x.toLocaleDateString(lang === 'te' ? 'te-IN' : 'en-IN', o || { weekday:'short', day:'numeric', month:'short', year:'numeric' }); };
 const today = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
 
+// login in two steps: (1) Student ID + mobile, (2) family PIN — or create one on first login
+let step = 'id', setupTok = '';
+function stepLabels() {
+  $('go').textContent = t(step === 'setpin' ? 'savePin' : step === 'pin' ? 'login' : 'next');
+  $('pinLbl').textContent = t(step === 'setpin' ? 'pinNew' : 'pinEnter');
+  $('pinHint').textContent = step === 'setpin' ? t('pinNewHint') : '';
+}
+function showStep(s) {
+  step = s;
+  $('idBox').style.display = s === 'id' ? '' : 'none';
+  $('pinBox').style.display = s === 'id' ? 'none' : '';
+  $('pin2Wrap').style.display = s === 'setpin' ? '' : 'none';
+  $('forgot').style.display = s === 'pin' ? '' : 'none';
+  const m = $('mob').value.replace(/\D/g, '').slice(-10);
+  $('who').textContent = 'ESK-' + $('sid').value.replace(/\D/g, '') + ' · ' + (m ? m.slice(0, 2) + '••••••' + m.slice(-2) : '');
+  $('pin').value = ''; $('pin2').value = '';
+  stepLabels();
+  if (s !== 'id') setTimeout(() => $('pin').focus(), 50);
+}
 $('go').onclick = async () => {
   $('err').textContent = ''; $('go').disabled = true; $('go').textContent = t('checking');
-  try { S = await call({ action:'login', id: $('sid').value, mobile: $('mob').value }); sess.set(S); start(); }
-  catch (e) { $('err').textContent = e.message; }
-  $('go').disabled = false; $('go').textContent = t('login');
+  try {
+    const r = step === 'setpin'
+      ? await call({ action:'setpin', setup: setupTok, pin: $('pin').value, pin2: $('pin2').value })
+      : await call({ action:'login', id: $('sid').value, mobile: $('mob').value, pin: step === 'pin' ? $('pin').value : '' });
+    if (r.step === 'pin') showStep('pin');
+    else if (r.step === 'setpin') { setupTok = r.setup; showStep('setpin'); }
+    else { S = r; sess.set(S); setupTok = ''; showStep('id'); start(); }
+  } catch (e) {
+    $('err').textContent = e.message;
+    if (e.code === 'setupExpired') showStep('id');
+    if (e.code === 'pinExists') showStep('pin');
+    if (step !== 'id') { $('pin').value = ''; $('pin2').value = ''; $('pin').focus(); }
+  }
+  $('go').disabled = false; stepLabels();
 };
-['sid','mob'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('go').click(); }));
-$('out').onclick = () => { sess.set(null); S = null; $('portal').style.display='none'; $('loginBox').style.display=''; $('sid').value=''; $('mob').value=''; window.scrollTo(0,0); };
+['sid','mob','pin','pin2'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('go').click(); }));
+['pin','pin2'].forEach(id => $(id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); }));
+$('pin').addEventListener('input', () => { if (step === 'pin' && $('pin').value.length === 4) $('go').click(); });
+$('back').onclick = () => { $('err').textContent = ''; showStep('id'); };
+$('forgot').onclick = () => { $('err').textContent = t('forgotMsg'); };
+$('out').onclick = () => { sess.set(null); S = null; $('portal').style.display='none'; $('loginBox').style.display=''; $('sid').value=''; $('mob').value=''; $('err').textContent=''; showStep('id'); window.scrollTo(0,0); };
 
 function start() {
   $('loginBox').style.display = 'none'; $('portal').style.display = '';
