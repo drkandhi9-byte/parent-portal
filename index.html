@@ -48,6 +48,19 @@
   .note { background:var(--gold-soft); border-left:4px solid var(--gold); border-radius:8px; padding:9px 11px; margin-top:12px; font-size:13px; color:#5b4a12; }
   .note:empty { display:none; }
   .lrow { display:flex; justify-content:flex-end; margin-top:6px; }
+  .adm { text-align:center; margin-top:14px; border-top:1px solid var(--line); padding-top:10px; }
+  .alink { background:none; border:0; color:var(--muted); font-size:13px; font-weight:700; cursor:pointer; text-decoration:underline; }
+  .abadge { display:inline-block; background:var(--maroon); color:#fff; font-size:11px; font-weight:800; border-radius:6px; padding:2px 7px; margin-right:6px; vertical-align:middle; }
+  .search { width:100%; padding:11px 12px; font-size:15px; border:1px solid #c9cfd9; border-radius:10px; font-family:inherit; margin-top:4px; }
+  .srow { display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:#fff; border:1px solid var(--line); border-radius:12px; padding:9px 12px; margin:7px 0; cursor:pointer; font-family:inherit; }
+  .srow .av { width:34px; height:34px; border-radius:50%; background:var(--gold-soft); color:var(--navy); display:flex; align-items:center; justify-content:center; font-weight:800; flex:none; }
+  .srow .nm { flex:1; min-width:0; }
+  .srow .nm b { display:block; color:var(--navy); font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .srow .nm small { color:var(--muted); font-size:12px; }
+  .srow .ct { text-align:right; font-size:12px; color:var(--muted); white-space:nowrap; }
+  .srow .ct b { color:var(--navy); }
+  .srow .ct .w { color:var(--wait); font-weight:800; }
+  .count { color:var(--muted); font-size:13px; margin:8px 2px 0; }
   /* children */
   .kids { display:flex; gap:10px; overflow-x:auto; padding:2px 0 6px; scrollbar-width:none; }
   .kid { display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); background:#fff; border-radius:14px; padding:8px 14px 8px 8px; cursor:pointer; flex:none; text-align:left; }
@@ -141,19 +154,30 @@
         <input id="pin2" class="pinIn" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" autocomplete="new-password"></div>
       <div class="note" id="pinHint"></div>
     </div>
+    <div id="admBox" style="display:none">
+      <div class="who"><span data-t="adminHead"></span><button class="link" id="aback" data-t="parentLogin"></button></div>
+      <div id="asetWrap"><label data-t="adminKey" for="akey"></label>
+        <input id="akey" type="text" autocomplete="off" autocapitalize="characters" placeholder="ESHA-XXXX-XXXX-XXXX"></div>
+      <label id="apwLbl" for="apw"></label>
+      <input id="apw" type="password" autocomplete="current-password">
+      <div id="apw2Wrap"><label data-t="adminConfirm" for="apw2"></label><input id="apw2" type="password" autocomplete="new-password"></div>
+      <div class="note" id="admHint"></div>
+    </div>
     <button class="btn" id="go"></button>
     <div class="msg" id="err"></div>
     <div class="lrow"><button class="link" id="forgot" data-t="forgot" style="display:none"></button></div>
-    <div class="hint" data-t="hint"></div>
+    <div class="hint" id="phint" data-t="hint"></div>
+    <div class="adm"><button class="alink" id="adminBtn" data-t="adminLink"></button></div>
   </div>
 
   <!-- PORTAL -->
   <div id="portal" style="display:none">
     <div class="top2"><span class="upd" id="upd"></span><button class="link" id="out" data-t="logout"></button></div>
     <div class="kids" id="kids"></div>
+    <div id="adm" style="display:none"></div>
     <div class="stats" id="stats"></div>
     <div id="latest"></div>
-    <div class="filters">
+    <div class="filters" id="pf">
       <div class="chips" id="subChips"></div>
       <div class="chips" id="dateChips"></div>
     </div>
@@ -177,6 +201,13 @@ const T = {
         pinWrong:'Wrong PIN. {left} attempt(s) left.', pinLocked:'Too many wrong PINs. Please try again after 30 minutes, or contact the school office.',
         pinFormat:'PIN must be exactly 4 digits.', pinMismatch:'The two PINs do not match.', pinWeak:'This PIN is too easy to guess. Please choose another.',
         pinMobile:'Please do not use the last 4 digits of your mobile number.', pinExists:'A PIN is already set for this family. Please log in with it.', setupExpired:'Time expired. Please log in again.',
+        adminLink:'School admin login', adminHead:'🔒 School admin', parentLogin:'← Parent login', adminPw:'Admin password', adminNew:'Create admin password', adminKey:'One-time setup key', adminConfirm:'Type the password again',
+        adminSetupHint:'First time only. The setup key is in Apps Script → Project Settings → Script properties → admin_setup_key. Use at least 8 characters with letters and numbers.',
+        adminWrong:'Wrong admin password. {left} attempt(s) left.', adminLocked:'Too many wrong attempts. Admin login is locked for 30 minutes.', adminKeyBad:'Setup key is not correct.',
+        adminWeak:'Password must be at least 8 characters with letters and numbers.', adminMismatch:'The two passwords do not match.', adminExists:'Admin password is already set. Please log in.',
+        adminTitle:'All students', todaySubs:'Homework submitted today', todayAi:'AI reviewed today', todayWait:'Waiting for AI review (today)', todayKids:'Students who submitted today',
+        allClasses:'All classes', search:'Search by name or ESK ID', allBack:'← All students', waitOnly:'⏳ Waiting review', noStudents:'No students match.', showing:'Showing {n} of {m} students',
+        hwShort:'hw', notYet:'No homework yet',
         logout:'Log out', sent:'Homework sent (last 7 days)', ready:'AI reviews ready', waiting:'Waiting for AI review', last:'Last submitted', latest:'Latest AI review',
         open:'Open review', allSub:'All subjects', allDates:'All dates', week:'Last 7 days', month:'This month', pick:'📅 Pick date', given:'Homework given',
         reviewed:'AI reviewed ✓', awaiting:'Awaiting review', page:'Page', ai:'AI Review', empty:'No homework found for this selection.', noHw:'No homework uploaded yet for this child.',
@@ -189,6 +220,13 @@ const T = {
         pinWrong:'PIN తప్పు. ఇంకా {left} ప్రయత్నాలు మిగిలాయి.', pinLocked:'చాలా సార్లు తప్పు PIN. 30 నిమిషాల తర్వాత ప్రయత్నించండి, లేదా స్కూల్ ఆఫీసును సంప్రదించండి.',
         pinFormat:'PIN ఖచ్చితంగా 4 అంకెలు ఉండాలి.', pinMismatch:'రెండు PINలు సరిపోలలేదు.', pinWeak:'ఈ PIN సులభంగా ఊహించవచ్చు. వేరేది ఎంచుకోండి.',
         pinMobile:'మొబైల్ నంబర్ చివరి 4 అంకెలు PINగా వాడవద్దు.', pinExists:'ఈ కుటుంబానికి PIN ఇప్పటికే ఉంది. దానితో లాగిన్ చేయండి.', setupExpired:'సమయం ముగిసింది. మళ్లీ లాగిన్ చేయండి.',
+        adminLink:'స్కూల్ అడ్మిన్ లాగిన్', adminHead:'🔒 స్కూల్ అడ్మిన్', parentLogin:'← తల్లిదండ్రుల లాగిన్', adminPw:'అడ్మిన్ పాస్‌వర్డ్', adminNew:'అడ్మిన్ పాస్‌వర్డ్ సృష్టించండి', adminKey:'ఒక్కసారి సెటప్ కీ', adminConfirm:'పాస్‌వర్డ్ మళ్లీ టైప్ చేయండి',
+        adminSetupHint:'మొదటిసారి మాత్రమే. సెటప్ కీ Apps Script → Project Settings → Script properties → admin_setup_key లో ఉంటుంది. కనీసం 8 అక్షరాలు, అక్షరాలు + అంకెలు వాడండి.',
+        adminWrong:'అడ్మిన్ పాస్‌వర్డ్ తప్పు. ఇంకా {left} ప్రయత్నాలు.', adminLocked:'చాలా తప్పు ప్రయత్నాలు. అడ్మిన్ లాగిన్ 30 నిమిషాలు లాక్ అయింది.', adminKeyBad:'సెటప్ కీ సరైనది కాదు.',
+        adminWeak:'పాస్‌వర్డ్ కనీసం 8 అక్షరాలు, అక్షరాలు + అంకెలతో ఉండాలి.', adminMismatch:'రెండు పాస్‌వర్డ్‌లు సరిపోలలేదు.', adminExists:'అడ్మిన్ పాస్‌వర్డ్ ఇప్పటికే ఉంది. లాగిన్ చేయండి.',
+        adminTitle:'అందరు విద్యార్థులు', todaySubs:'ఈరోజు పంపిన హోంవర్క్', todayAi:'ఈరోజు AI రివ్యూ అయినవి', todayWait:'AI రివ్యూ కోసం వేచి ఉన్నవి (ఈరోజు)', todayKids:'ఈరోజు పంపిన విద్యార్థులు',
+        allClasses:'అన్ని తరగతులు', search:'పేరు లేదా ESK ID తో వెతకండి', allBack:'← అందరు విద్యార్థులు', waitOnly:'⏳ రివ్యూ పెండింగ్', noStudents:'విద్యార్థులు కనబడలేదు.', showing:'{m} లో {n} విద్యార్థులు',
+        hwShort:'హోంవర్క్', notYet:'ఇంకా హోంవర్క్ లేదు',
         logout:'లాగ్ అవుట్', sent:'పంపిన హోంవర్క్ (గత 7 రోజులు)', ready:'AI రివ్యూలు సిద్ధం', waiting:'AI రివ్యూ కోసం వేచి ఉన్నవి', last:'చివరిగా పంపినది', latest:'తాజా AI రివ్యూ',
         open:'రివ్యూ తెరవండి', allSub:'అన్ని సబ్జెక్టులు', allDates:'అన్ని తేదీలు', week:'గత 7 రోజులు', month:'ఈ నెల', pick:'📅 తేదీ ఎంచుకోండి', given:'హోంవర్క్ ఇచ్చిన తేదీ',
         reviewed:'AI రివ్యూ అయింది ✓', awaiting:'రివ్యూ కోసం వేచి ఉంది', page:'పేజీ', ai:'AI రివ్యూ', empty:'ఈ ఎంపికకు హోంవర్క్ లేదు.', noHw:'ఈ పిల్లల హోంవర్క్ ఇంకా అప్‌లోడ్ కాలేదు.',
@@ -231,39 +269,60 @@ const today = () => { const n = new Date(); return new Date(n.getFullYear(), n.g
 // login in two steps: (1) Student ID + mobile, (2) family PIN — or create one on first login
 let step = 'id', setupTok = '';
 function stepLabels() {
-  $('go').textContent = t(step === 'setpin' ? 'savePin' : step === 'pin' ? 'login' : 'next');
+  $('go').textContent = t(step === 'setpin' ? 'savePin' : step === 'pin' || step === 'admin' || step === 'adminsetup' ? 'login' : 'next');
   $('pinLbl').textContent = t(step === 'setpin' ? 'pinNew' : 'pinEnter');
   $('pinHint').textContent = step === 'setpin' ? t('pinNewHint') : '';
+  $('apwLbl').textContent = t(step === 'adminsetup' ? 'adminNew' : 'adminPw');
+  $('admHint').textContent = step === 'adminsetup' ? t('adminSetupHint') : '';
 }
 function showStep(s) {
   step = s;
+  const adm = s === 'admin' || s === 'adminsetup';
   $('idBox').style.display = s === 'id' ? '' : 'none';
-  $('pinBox').style.display = s === 'id' ? 'none' : '';
+  $('pinBox').style.display = s === 'pin' || s === 'setpin' ? '' : 'none';
+  $('admBox').style.display = adm ? '' : 'none';
+  $('asetWrap').style.display = $('apw2Wrap').style.display = s === 'adminsetup' ? '' : 'none';
+  $('apw').autocomplete = s === 'adminsetup' ? 'new-password' : 'current-password';
+  $('adminBtn').parentNode.style.display = s === 'id' ? '' : 'none';
+  $('phint').style.display = adm ? 'none' : '';
+  $('apw').value = ''; $('apw2').value = '';
+  if (adm) setTimeout(() => (s === 'adminsetup' ? $('akey') : $('apw')).focus(), 50);
   $('pin2Wrap').style.display = s === 'setpin' ? '' : 'none';
   $('forgot').style.display = s === 'pin' ? '' : 'none';
   const m = $('mob').value.replace(/\D/g, '').slice(-10);
   $('who').textContent = 'ESK-' + $('sid').value.replace(/\D/g, '') + ' · ' + (m ? m.slice(0, 2) + '••••••' + m.slice(-2) : '');
   $('pin').value = ''; $('pin2').value = '';
   stepLabels();
-  if (s !== 'id') setTimeout(() => $('pin').focus(), 50);
+  if (s === 'pin' || s === 'setpin') setTimeout(() => $('pin').focus(), 50);
 }
 $('go').onclick = async () => {
   $('err').textContent = ''; $('go').disabled = true; $('go').textContent = t('checking');
   try {
-    const r = step === 'setpin'
-      ? await call({ action:'setpin', setup: setupTok, pin: $('pin').value, pin2: $('pin2').value })
+    const r = step === 'setpin' ? await call({ action:'setpin', setup: setupTok, pin: $('pin').value, pin2: $('pin2').value })
+      : step === 'admin' ? await call({ action:'adminlogin', pw: $('apw').value })
+      : step === 'adminsetup' ? await call({ action:'adminsetup', key: $('akey').value, pw: $('apw').value, pw2: $('apw2').value })
       : await call({ action:'login', id: $('sid').value, mobile: $('mob').value, pin: step === 'pin' ? $('pin').value : '' });
     if (r.step === 'pin') showStep('pin');
     else if (r.step === 'setpin') { setupTok = r.setup; showStep('setpin'); }
+    else if (r.step === 'admin' || r.step === 'adminsetup') showStep(r.step);
     else { S = r; sess.set(S); setupTok = ''; showStep('id'); start(); }
   } catch (e) {
     $('err').textContent = e.message;
     if (e.code === 'setupExpired') showStep('id');
     if (e.code === 'pinExists') showStep('pin');
-    if (step !== 'id') { $('pin').value = ''; $('pin2').value = ''; $('pin').focus(); }
+    if (e.code === 'adminExists') showStep('admin');
+    if (step === 'pin' || step === 'setpin') { $('pin').value = ''; $('pin2').value = ''; $('pin').focus(); }
+    if (step === 'admin') { $('apw').value = ''; $('apw').focus(); }
   }
   $('go').disabled = false; stepLabels();
 };
+$('adminBtn').onclick = async () => {
+  $('err').textContent = '';
+  try { const r = await call({ action:'adminlogin', pw:'' }); showStep(r.step || 'admin'); }
+  catch (e) { $('err').textContent = e.message; }
+};
+$('aback').onclick = () => { $('err').textContent = ''; showStep('id'); };
+['akey','apw','apw2'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('go').click(); }));
 ['sid','mob','pin','pin2'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('go').click(); }));
 ['pin','pin2'].forEach(id => $(id).addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); }));
 $('pin').addEventListener('input', () => { if (step === 'pin' && $('pin').value.length === 4) $('go').click(); });
@@ -273,8 +332,57 @@ $('out').onclick = () => { sess.set(null); S = null; $('portal').style.display='
 
 function start() {
   $('loginBox').style.display = 'none'; $('portal').style.display = '';
-  cur = S.students[0].id; fSub = ''; fDate = 'all'; fDay = ''; shown = 8;
+  cur = S.admin ? '' : S.students[0].id; fSub = ''; fDate = 'all'; fDay = ''; shown = 8;
   render();
+}
+
+// ---------- ADMIN: all students ----------
+let aCls = '', aQ = '', aWait = false, aShow = 60;
+function sections(on) { ['stats','latest','list'].forEach(id => $(id).style.display = on ? '' : 'none'); $('pf').style.display = on ? '' : 'none'; }
+function renderAdmin() {
+  sections(false);
+  $('kids').innerHTML = ''; $('upd').textContent = S.updated ? t('updated') + ': ' + S.updated : '';
+  const d = S.today || {}, A = $('adm'); A.style.display = '';
+  const classes = [...new Set(S.students.map(s => s.cls))];
+  A.innerHTML =
+    `<div class="day"><span class="abadge">ADMIN</span>${t('adminTitle')} · ${S.students.length}</div>` +
+    `<div class="stats">` +
+      `<div class="stat sent"><div class="n">${d.subs || 0}</div><div class="l">${t('todaySubs')}</div></div>` +
+      `<div class="stat ok"><div class="n">${d.ai || 0}</div><div class="l">${t('todayAi')}</div></div>` +
+      `<div class="stat wait"><div class="n">${Math.max(0, (d.subs || 0) - (d.ai || 0))}</div><div class="l">${t('todayWait')}</div></div>` +
+      `<div class="stat last"><div class="n">${d.kids || 0} / ${d.total || S.students.length}</div><div class="l">${t('todayKids')}</div></div></div>` +
+    `<div class="filters"><div class="chips" id="aCls">` +
+      [`<button class="chip ${!aCls?'on':''}" data-c="">${t('allClasses')}</button>`].concat(classes.map(c => `<button class="chip ${c===aCls?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`)).join('') +
+      `<button class="chip ${aWait?'on':''}" id="aWait">${t('waitOnly')}</button></div>` +
+      `<input class="search" id="aQ" type="search" placeholder="${esc(t('search'))}" value="${esc(aQ)}"></div>` +
+    `<div class="count" id="aCount"></div><div id="slist"></div>`;
+  document.querySelectorAll('#aCls .chip[data-c]').forEach(b => b.onclick = () => { aCls = b.dataset.c; aShow = 60; renderAdmin(); });
+  $('aWait').onclick = () => { aWait = !aWait; aShow = 60; renderAdmin(); };
+  $('aQ').oninput = e => { aQ = e.target.value; aShow = 60; studentList(); };
+  studentList();
+}
+function studentList() {
+  const q = aQ.trim().toLowerCase().replace(/^esk-?/, '');
+  const L = S.students.filter(s => (!aCls || s.cls === aCls) && (!aWait || s.wait > 0) &&
+    (!q || s.name.toLowerCase().includes(q) || s.id.toLowerCase().replace('esk-', '').includes(q)));
+  $('aCount').textContent = t('showing').replace('{n}', Math.min(aShow, L.length)).replace('{m}', L.length);
+  if (!L.length) { $('slist').innerHTML = `<div class="empty">${t('noStudents')}</div>`; return; }
+  $('slist').innerHTML = L.slice(0, aShow).map(s =>
+    `<button class="srow" data-id="${s.id}"><span class="av">${esc((s.name||'?').charAt(0))}</span>` +
+    `<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.cls)} · ${s.id}</small></span>` +
+    `<span class="ct">${s.n ? `<b>${s.n}</b> ${t('hwShort')} · ${s.ai} ✓` + (s.wait ? ` · <span class="w">${s.wait} ⏳</span>` : '') +
+      `<br>${t('last')}: ${esc(fmt(s.last, { day:'numeric', month:'short' }))}` : t('notYet')}</span></button>`).join('') +
+    (L.length > aShow ? `<button class="more" id="aMore">${t('more')}</button>` : '');
+  document.querySelectorAll('.srow').forEach(b => b.onclick = () => openStudent(b.dataset.id));
+  if ($('aMore')) $('aMore').onclick = () => { aShow += 60; studentList(); };
+}
+async function openStudent(id) {
+  const b = document.querySelector(`.srow[data-id="${id}"] .ct`); if (b) b.textContent = t('loading');
+  try {
+    const r = await call({ action:'adminitems', token:S.token, id });
+    S.items = r.items; cur = id; fSub = ''; fDate = 'all'; fDay = ''; shown = 8;
+    render(); window.scrollTo(0, 0);
+  } catch (e) { if (/log in|expired/i.test(e.message)) { $('out').click(); $('err').textContent = e.message; } else alert(e.message); }
 }
 
 // group a child's items into submissions: date + subject
@@ -285,9 +393,14 @@ function groups(items) {
   return Object.values(m).sort((a,b) => (b.date + b.subject).localeCompare(a.date + a.subject) || 0).sort((a,b) => b.date.localeCompare(a.date));
 }
 function render() {
-  // children
-  $('kids').innerHTML = S.students.map(k => `<button class="kid ${k.id===cur?'on':''}" data-id="${k.id}"><span class="av">${esc((k.name||'?').trim().charAt(0))}</span><span><b>${esc(k.name)}</b><small>${esc(k.cls)} · ${k.id}</small></span></button>`).join('');
-  document.querySelectorAll('.kid').forEach(b => b.onclick = () => { cur = b.dataset.id; fSub=''; fDate='all'; fDay=''; shown=8; render(); });
+  if (S.admin && !cur) { renderAdmin(); return; }
+  $('adm').style.display = 'none'; sections(true);
+  // children (admin: the selected student + back button)
+  const kidList = S.admin ? S.students.filter(k => k.id === cur) : S.students;
+  $('kids').innerHTML = (S.admin ? `<button class="kid" id="allBack"><b>${t('allBack')}</b></button>` : '') +
+    kidList.map(k => `<button class="kid ${k.id===cur?'on':''}" data-id="${k.id}"><span class="av">${esc((k.name||'?').trim().charAt(0))}</span><span><b>${esc(k.name)}</b><small>${esc(k.cls)} · ${k.id}</small></span></button>`).join('');
+  document.querySelectorAll('.kid[data-id]').forEach(b => b.onclick = () => { cur = b.dataset.id; fSub=''; fDate='all'; fDay=''; shown=8; render(); });
+  if ($('allBack')) $('allBack').onclick = () => { cur = ''; S.items = []; render(); };
   $('upd').textContent = S.updated ? t('updated') + ': ' + S.updated : '';
   const mine = S.items.filter(x => x.ids.includes(cur));
   const G = groups(mine);
