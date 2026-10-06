@@ -61,6 +61,25 @@
   .srow .ct b { color:var(--navy); }
   .srow .ct .w { color:var(--wait); font-weight:800; }
   .count { color:var(--muted); font-size:13px; margin:8px 2px 0; }
+  .dbar { display:flex; align-items:center; gap:8px; margin:10px 0 4px; }
+  .dnav { width:42px; height:42px; flex:none; border:1.5px solid var(--navy); background:#fff; color:var(--navy); border-radius:12px; font-size:22px; font-weight:800; cursor:pointer; }
+  .dnav:disabled { opacity:.3; cursor:default; }
+  .dpick { position:relative; flex:1; text-align:center; background:var(--navy); color:#fff; border-radius:12px; padding:10px 8px; font-weight:800; font-size:15px; }
+  .dpick::after { content:' ▾'; font-size:12px; }
+  .dpick input { position:absolute; inset:0; opacity:0; width:100%; cursor:pointer; }
+  .ctab { background:#fff; border:1px solid var(--line); border-radius:14px; padding:6px; margin:12px 0; }
+  .cth, .ctr { display:grid; grid-template-columns:1.1fr 1.6fr .7fr; gap:8px; align-items:center; padding:7px 8px; font-size:13px; }
+  .cth { color:var(--muted); font-weight:700; font-size:12px; }
+  .ctr { width:100%; border:0; background:none; text-align:left; font-family:inherit; cursor:pointer; border-top:1px solid var(--line); border-radius:8px; }
+  .ctr.on { background:var(--gold-soft); }
+  .ctr span:first-child { font-weight:800; color:var(--navy); }
+  .ctr .w { color:var(--wait); font-weight:800; }
+  .pbar { display:inline-block; vertical-align:middle; width:60px; height:6px; background:#eef0f4; border-radius:4px; margin-left:6px; overflow:hidden; }
+  .pbar i { display:block; height:100%; background:var(--ok); }
+  .sj { display:inline-block; font-size:11.5px; font-weight:700; border-radius:10px; padding:2px 7px; margin:1px 0; }
+  .sj.ok { background:var(--ok-soft); color:var(--ok); } .sj.wt { background:var(--wait-soft); color:var(--wait); }
+  .srow .ct .no { color:#b42318; font-weight:700; }
+  .srow .ct { white-space:normal; max-width:55%; }
   /* children */
   .kids { display:flex; gap:10px; overflow-x:auto; padding:2px 0 6px; scrollbar-width:none; }
   .kid { display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); background:#fff; border-radius:14px; padding:8px 14px 8px 8px; cursor:pointer; flex:none; text-align:left; }
@@ -208,6 +227,10 @@ const T = {
         adminTitle:'All students', todaySubs:'Homework submitted today', todayAi:'AI reviewed today', todayWait:'Waiting for AI review (today)', todayKids:'Students who submitted today',
         allClasses:'All classes', search:'Search by name or ESK ID', allBack:'← All students', waitOnly:'⏳ Waiting review', noStudents:'No students match.', showing:'Showing {n} of {m} students',
         hwShort:'hw', notYet:'No homework yet',
+        daySubs:'Homework submitted', dayAi:'AI reviewed', dayWait:'Waiting for AI review', dayKids:'Students who submitted',
+        allSubs:'Homework submitted (all days)', allAi:'AI reviewed (all days)', allWait:'Waiting for AI review', allKids:'Students with any homework',
+        cls:'Class', submitted:'Submitted', waitingShort:'Waiting', allDays:'All days', today:'Today', yesterday:'Yesterday',
+        st_all:'All students', st_sub:'✓ Submitted', st_not:'✗ Not submitted', st_wait:'⏳ Waiting review', notSub:'Not submitted',
         logout:'Log out', sent:'Homework sent (last 7 days)', ready:'AI reviews ready', waiting:'Waiting for AI review', last:'Last submitted', latest:'Latest AI review',
         open:'Open review', allSub:'All subjects', allDates:'All dates', week:'Last 7 days', month:'This month', pick:'📅 Pick date', given:'Homework given',
         reviewed:'AI reviewed ✓', awaiting:'Awaiting review', page:'Page', ai:'AI Review', empty:'No homework found for this selection.', noHw:'No homework uploaded yet for this child.',
@@ -227,6 +250,10 @@ const T = {
         adminTitle:'అందరు విద్యార్థులు', todaySubs:'ఈరోజు పంపిన హోంవర్క్', todayAi:'ఈరోజు AI రివ్యూ అయినవి', todayWait:'AI రివ్యూ కోసం వేచి ఉన్నవి (ఈరోజు)', todayKids:'ఈరోజు పంపిన విద్యార్థులు',
         allClasses:'అన్ని తరగతులు', search:'పేరు లేదా ESK ID తో వెతకండి', allBack:'← అందరు విద్యార్థులు', waitOnly:'⏳ రివ్యూ పెండింగ్', noStudents:'విద్యార్థులు కనబడలేదు.', showing:'{m} లో {n} విద్యార్థులు',
         hwShort:'హోంవర్క్', notYet:'ఇంకా హోంవర్క్ లేదు',
+        daySubs:'పంపిన హోంవర్క్', dayAi:'AI రివ్యూ అయినవి', dayWait:'AI రివ్యూ కోసం వేచి ఉన్నవి', dayKids:'పంపిన విద్యార్థులు',
+        allSubs:'పంపిన హోంవర్క్ (అన్ని రోజులు)', allAi:'AI రివ్యూ (అన్ని రోజులు)', allWait:'AI రివ్యూ కోసం వేచి ఉన్నవి', allKids:'హోంవర్క్ పంపిన విద్యార్థులు',
+        cls:'తరగతి', submitted:'పంపినవారు', waitingShort:'పెండింగ్', allDays:'అన్ని రోజులు', today:'ఈరోజు', yesterday:'నిన్న',
+        st_all:'అందరు విద్యార్థులు', st_sub:'✓ పంపినవారు', st_not:'✗ పంపనివారు', st_wait:'⏳ రివ్యూ పెండింగ్', notSub:'పంపలేదు',
         logout:'లాగ్ అవుట్', sent:'పంపిన హోంవర్క్ (గత 7 రోజులు)', ready:'AI రివ్యూలు సిద్ధం', waiting:'AI రివ్యూ కోసం వేచి ఉన్నవి', last:'చివరిగా పంపినది', latest:'తాజా AI రివ్యూ',
         open:'రివ్యూ తెరవండి', allSub:'అన్ని సబ్జెక్టులు', allDates:'అన్ని తేదీలు', week:'గత 7 రోజులు', month:'ఈ నెల', pick:'📅 తేదీ ఎంచుకోండి', given:'హోంవర్క్ ఇచ్చిన తేదీ',
         reviewed:'AI రివ్యూ అయింది ✓', awaiting:'రివ్యూ కోసం వేచి ఉంది', page:'పేజీ', ai:'AI రివ్యూ', empty:'ఈ ఎంపికకు హోంవర్క్ లేదు.', noHw:'ఈ పిల్లల హోంవర్క్ ఇంకా అప్‌లోడ్ కాలేదు.',
@@ -328,7 +355,7 @@ $('aback').onclick = () => { $('err').textContent = ''; showStep('id'); };
 $('pin').addEventListener('input', () => { if (step === 'pin' && $('pin').value.length === 4) $('go').click(); });
 $('back').onclick = () => { $('err').textContent = ''; showStep('id'); };
 $('forgot').onclick = () => { $('err').textContent = t('forgotMsg'); };
-$('out').onclick = () => { sess.set(null); S = null; $('portal').style.display='none'; $('loginBox').style.display=''; $('sid').value=''; $('mob').value=''; $('err').textContent=''; showStep('id'); window.scrollTo(0,0); };
+$('out').onclick = () => { sess.set(null); S = null; aDay = null; aCls = ''; aQ = ''; aStat = 'all'; Object.keys(dayCache).forEach(k => delete dayCache[k]); $('portal').style.display='none'; $('loginBox').style.display=''; $('sid').value=''; $('mob').value=''; $('err').textContent=''; showStep('id'); window.scrollTo(0,0); };
 
 function start() {
   $('loginBox').style.display = 'none'; $('portal').style.display = '';
@@ -336,43 +363,110 @@ function start() {
   render();
 }
 
-// ---------- ADMIN: all students ----------
-let aCls = '', aQ = '', aWait = false, aShow = 60;
+// ---------- ADMIN: all students, any day ----------
+let aCls = '', aQ = '', aStat = 'all', aShow = 60, aDay = null;
+const dayCache = {};
+const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const shiftDay = (d, n) => { const x = pd(d); x.setDate(x.getDate() + n); return iso(x); };
 function sections(on) { ['stats','latest','list'].forEach(id => $(id).style.display = on ? '' : 'none'); $('pf').style.display = on ? '' : 'none'; }
-function renderAdmin() {
+function todayIso() { return (S.today && S.today.date) || iso(today()); }
+async function setDay(d) {
+  aDay = d; aShow = 60; if (!d) aStat = aStat === 'not' || aStat === 'sub' ? 'all' : aStat;
+  if (d && !dayCache[d]) {
+    renderAdmin(true);
+    try { const r = await call({ action:'adminday', token:S.token, date:d }); dayCache[d] = r.map; }
+    catch (e) { if (/log in|expired/i.test(e.message)) { $('out').click(); $('err').textContent = e.message; return; } dayCache[d] = {}; }
+    if (aDay !== d) return;
+  }
+  renderAdmin();
+}
+function renderAdmin(loading) {
+  if (aDay === null) { setDay(todayIso()); return; }
   sections(false);
   $('kids').innerHTML = ''; $('upd').textContent = S.updated ? t('updated') + ': ' + S.updated : '';
-  const d = S.today || {}, A = $('adm'); A.style.display = '';
+  const A = $('adm'); A.style.display = '';
+  const tIso = todayIso(), yIso = shiftDay(tIso, -1);
+  const M = aDay ? (dayCache[aDay] || {}) : null;
+  // numbers for the chosen day (or all time)
+  let n1, n2, n3, n4, l1, l2, l3, l4;
+  if (aDay) {
+    const sm = (S.days || []).find(x => x.d === aDay) || { subs:0, ai:0, kids:0 };
+    n1 = sm.subs; n2 = sm.ai; n3 = Math.max(0, sm.subs - sm.ai); n4 = sm.kids + ' / ' + S.students.length;
+    l1 = t('daySubs'); l2 = t('dayAi'); l3 = t('dayWait'); l4 = t('dayKids');
+  } else {
+    const tot = S.students.reduce((a, s) => (a.n += s.n, a.ai += s.ai, a.w += s.wait, a.k += s.n ? 1 : 0, a), { n:0, ai:0, w:0, k:0 });
+    n1 = tot.n; n2 = tot.ai; n3 = tot.w; n4 = tot.k + ' / ' + S.students.length;
+    l1 = t('allSubs'); l2 = t('allAi'); l3 = t('allWait'); l4 = t('allKids');
+  }
   const classes = [...new Set(S.students.map(s => s.cls))];
+  // class-wise table for the day
+  let ctab = '';
+  if (aDay && !loading) {
+    ctab = `<div class="ctab"><div class="cth"><span>${t('cls')}</span><span>${t('submitted')}</span><span>${t('waitingShort')}</span></div>` +
+      classes.map(c => {
+        const ks = S.students.filter(s => s.cls === c), done = ks.filter(s => M[s.id] && M[s.id].s.length).length;
+        const w = ks.reduce((a, s) => a + (M[s.id] ? M[s.id].s.filter(x => !M[s.id].a.includes(x)).length : 0), 0);
+        const pc = ks.length ? Math.round(done * 100 / ks.length) : 0;
+        return `<button class="ctr ${c===aCls?'on':''}" data-c="${esc(c)}"><span>${esc(c)}</span><span><b>${done}</b> / ${ks.length} <i class="pbar"><i style="width:${pc}%"></i></i></span><span class="${w?'w':''}">${w || '–'}</span></button>`;
+      }).join('') + `</div>`;
+  }
   A.innerHTML =
     `<div class="day"><span class="abadge">ADMIN</span>${t('adminTitle')} · ${S.students.length}</div>` +
+    `<div class="dbar"><button class="dnav" id="dPrev" ${aDay?'':'disabled'}>‹</button>` +
+      `<span class="dpick">${aDay ? esc(fmt(aDay)) : t('allDays')}<input type="date" id="dIn" value="${aDay||''}" max="${tIso}"></span>` +
+      `<button class="dnav" id="dNext" ${aDay && aDay < tIso ? '' : 'disabled'}>›</button></div>` +
+    `<div class="chips dchips">` +
+      `<button class="chip ${aDay===tIso?'on':''}" data-d="${tIso}">${t('today')}</button>` +
+      `<button class="chip ${aDay===yIso?'on':''}" data-d="${yIso}">${t('yesterday')}</button>` +
+      `<button class="chip ${!aDay?'on':''}" data-d="">${t('allDays')}</button></div>` +
     `<div class="stats">` +
-      `<div class="stat sent"><div class="n">${d.subs || 0}</div><div class="l">${t('todaySubs')}</div></div>` +
-      `<div class="stat ok"><div class="n">${d.ai || 0}</div><div class="l">${t('todayAi')}</div></div>` +
-      `<div class="stat wait"><div class="n">${Math.max(0, (d.subs || 0) - (d.ai || 0))}</div><div class="l">${t('todayWait')}</div></div>` +
-      `<div class="stat last"><div class="n">${d.kids || 0} / ${d.total || S.students.length}</div><div class="l">${t('todayKids')}</div></div></div>` +
-    `<div class="filters"><div class="chips" id="aCls">` +
-      [`<button class="chip ${!aCls?'on':''}" data-c="">${t('allClasses')}</button>`].concat(classes.map(c => `<button class="chip ${c===aCls?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`)).join('') +
-      `<button class="chip ${aWait?'on':''}" id="aWait">${t('waitOnly')}</button></div>` +
+      `<div class="stat sent"><div class="n">${n1}</div><div class="l">${l1}</div></div>` +
+      `<div class="stat ok"><div class="n">${n2}</div><div class="l">${l2}</div></div>` +
+      `<div class="stat wait"><div class="n">${n3}</div><div class="l">${l3}</div></div>` +
+      `<div class="stat last"><div class="n">${n4}</div><div class="l">${l4}</div></div></div>` +
+    (loading ? `<div class="empty">${t('loading')}</div>` : ctab +
+    `<div class="filters"><div class="chips">` +
+      (aDay ? ['all','sub','not','wait'] : ['all','wait']).map(k => `<button class="chip st ${aStat===k?'on':''}" data-s="${k}">${t('st_' + k)}</button>`).join('') + `</div>` +
+      `<div class="chips" id="aCls">` +
+      [`<button class="chip ${!aCls?'on':''}" data-c="">${t('allClasses')}</button>`].concat(classes.map(c => `<button class="chip ${c===aCls?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`)).join('') + `</div>` +
       `<input class="search" id="aQ" type="search" placeholder="${esc(t('search'))}" value="${esc(aQ)}"></div>` +
-    `<div class="count" id="aCount"></div><div id="slist"></div>`;
-  document.querySelectorAll('#aCls .chip[data-c]').forEach(b => b.onclick = () => { aCls = b.dataset.c; aShow = 60; renderAdmin(); });
-  $('aWait').onclick = () => { aWait = !aWait; aShow = 60; renderAdmin(); };
+    `<div class="count" id="aCount"></div><div id="slist"></div>`);
+  $('dPrev').onclick = () => setDay(shiftDay(aDay, -1));
+  $('dNext').onclick = () => setDay(shiftDay(aDay, 1));
+  $('dIn').onchange = e => { if (e.target.value) setDay(e.target.value); };
+  document.querySelectorAll('.dchips .chip').forEach(b => b.onclick = () => setDay(b.dataset.d || ''));
+  if (loading) return;
+  document.querySelectorAll('.chip.st').forEach(b => b.onclick = () => { aStat = b.dataset.s; aShow = 60; renderAdmin(); });
+  document.querySelectorAll('#aCls .chip, .ctr').forEach(b => b.onclick = () => { aCls = b.dataset.c === aCls && b.classList.contains('ctr') ? '' : b.dataset.c; aShow = 60; renderAdmin(); });
   $('aQ').oninput = e => { aQ = e.target.value; aShow = 60; studentList(); };
   studentList();
 }
 function studentList() {
+  const M = aDay ? (dayCache[aDay] || {}) : null;
   const q = aQ.trim().toLowerCase().replace(/^esk-?/, '');
-  const L = S.students.filter(s => (!aCls || s.cls === aCls) && (!aWait || s.wait > 0) &&
-    (!q || s.name.toLowerCase().includes(q) || s.id.toLowerCase().replace('esk-', '').includes(q)));
+  const st = s => { const m = M && M[s.id]; return { done: !!(m && m.s.length), wait: m ? m.s.filter(x => !m.a.includes(x)).length : 0 }; };
+  const L = S.students.filter(s => {
+    if (aCls && s.cls !== aCls) return false;
+    if (q && !s.name.toLowerCase().includes(q) && !s.id.toLowerCase().replace('esk-', '').includes(q)) return false;
+    if (!aDay) return aStat !== 'wait' || s.wait > 0;
+    const x = st(s);
+    return aStat === 'all' || (aStat === 'sub' && x.done) || (aStat === 'not' && !x.done) || (aStat === 'wait' && x.wait > 0);
+  });
   $('aCount').textContent = t('showing').replace('{n}', Math.min(aShow, L.length)).replace('{m}', L.length);
   if (!L.length) { $('slist').innerHTML = `<div class="empty">${t('noStudents')}</div>`; return; }
-  $('slist').innerHTML = L.slice(0, aShow).map(s =>
-    `<button class="srow" data-id="${s.id}"><span class="av">${esc((s.name||'?').charAt(0))}</span>` +
-    `<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.cls)} · ${s.id}</small></span>` +
-    `<span class="ct">${s.n ? `<b>${s.n}</b> ${t('hwShort')} · ${s.ai} ✓` + (s.wait ? ` · <span class="w">${s.wait} ⏳</span>` : '') +
-      `<br>${t('last')}: ${esc(fmt(s.last, { day:'numeric', month:'short' }))}` : t('notYet')}</span></button>`).join('') +
-    (L.length > aShow ? `<button class="more" id="aMore">${t('more')}</button>` : '');
+  $('slist').innerHTML = L.slice(0, aShow).map(s => {
+    let right;
+    if (aDay) {
+      const m = M[s.id];
+      right = m && m.s.length ? m.s.map(x => `<span class="sj ${m.a.includes(x)?'ok':'wt'}">${esc(x)} ${m.a.includes(x)?'✓':'⏳'}</span>`).join(' ')
+        : `<span class="no">${t('notSub')}</span>`;
+    } else {
+      right = s.n ? `<b>${s.n}</b> ${t('hwShort')} · ${s.ai} ✓` + (s.wait ? ` · <span class="w">${s.wait} ⏳</span>` : '') +
+        `<br>${t('last')}: ${esc(fmt(s.last, { day:'numeric', month:'short' }))}` : t('notYet');
+    }
+    return `<button class="srow" data-id="${s.id}"><span class="av">${esc((s.name||'?').charAt(0))}</span>` +
+      `<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.cls)} · ${s.id}</small></span><span class="ct">${right}</span></button>`;
+  }).join('') + (L.length > aShow ? `<button class="more" id="aMore">${t('more')}</button>` : '');
   document.querySelectorAll('.srow').forEach(b => b.onclick = () => openStudent(b.dataset.id));
   if ($('aMore')) $('aMore').onclick = () => { aShow += 60; studentList(); };
 }
@@ -380,7 +474,8 @@ async function openStudent(id) {
   const b = document.querySelector(`.srow[data-id="${id}"] .ct`); if (b) b.textContent = t('loading');
   try {
     const r = await call({ action:'adminitems', token:S.token, id });
-    S.items = r.items; cur = id; fSub = ''; fDate = 'all'; fDay = ''; shown = 8;
+    S.items = r.items; cur = id; fSub = ''; shown = 8;
+    if (aDay && r.items.some(x => x.date === aDay)) { fDate = 'day'; fDay = aDay; } else { fDate = 'all'; fDay = ''; }
     render(); window.scrollTo(0, 0);
   } catch (e) { if (/log in|expired/i.test(e.message)) { $('out').click(); $('err').textContent = e.message; } else alert(e.message); }
 }
