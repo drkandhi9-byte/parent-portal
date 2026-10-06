@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESHA Parent Portal</title>
+<meta name="theme-color" content="#263447">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Noto+Sans+Telugu:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#263447; --navy2:#34465f; --gold:#EEB943; --gold-soft:#fbf3dd; --maroon:#951F40; --bg:#f3f4f7; --card:#fff; --line:#e1e5ec; --muted:#5f6b7d; --ok:#1f7a4d; --ok-soft:#e5f4ec; --wait:#9a6700; --wait-soft:#fff4d6; }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--bg); color:#1d2433; font-family:'Open Sans','Noto Sans Telugu',Arial,sans-serif; font-size:15px; line-height:1.45; }
+  body.te { font-family:'Noto Sans Telugu','Open Sans',Arial,sans-serif; }
+  button { font-family:inherit; }
+  /* banner */
+  .banner { position:relative; display:flex; align-items:center; gap:12px; background:#ececec; padding:10px 16px; overflow:hidden; }
+  .banner img { height:58px; }
+  .banner .t1 { font-family:'Open Sans',sans-serif; font-weight:700; color:var(--navy); font-size:34px; letter-spacing:9px; line-height:.95; }
+  .banner .t2 { font-family:'Open Sans',sans-serif; font-weight:700; color:var(--navy); font-size:12px; letter-spacing:.3px; margin-top:3px; }
+  .banner .wedge { position:absolute; right:0; top:0; bottom:0; width:36px; background:var(--gold); clip-path:polygon(55% 0,100% 0,100% 100%,0 100%); }
+  .stripes i { display:block; } .stripes .g { height:4px; background:var(--gold); } .stripes .m { height:7px; background:var(--maroon); }
+  .bar { max-width:760px; margin:0 auto; padding:10px 16px 0; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .bar .title { font-weight:800; color:var(--navy); font-size:18px; }
+  .lang { display:flex; border:1.5px solid var(--navy); border-radius:20px; overflow:hidden; flex:none; }
+  .lang button { border:0; background:#fff; color:var(--navy); padding:6px 12px; font-weight:700; font-size:13px; cursor:pointer; }
+  .lang button.on { background:var(--navy); color:#fff; }
+  .wrap { max-width:760px; margin:0 auto; padding:12px 16px 30px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0; box-shadow:0 1px 2px rgba(20,30,50,.04); }
+  /* login */
+  .login { max-width:440px; margin:18px auto 0; }
+  .login h2 { margin:0 0 4px; color:var(--navy); font-size:22px; }
+  .login p { margin:0 0 6px; color:var(--muted); }
+  label { display:block; font-weight:700; margin:14px 0 6px; font-size:14px; }
+  .row { display:flex; }
+  .pfx { display:flex; align-items:center; padding:0 12px; background:#eef0f4; border:1px solid #c9cfd9; border-right:none; border-radius:10px 0 0 10px; font-weight:800; color:var(--navy); }
+  input[type=text], input[type=tel] { width:100%; padding:12px; font-size:17px; border:1px solid #c9cfd9; border-radius:10px; font-family:inherit; background:#fff; }
+  .row input { border-radius:0 10px 10px 0; min-width:0; }
+  input:focus { outline:2px solid var(--gold); outline-offset:1px; }
+  .btn { display:block; width:100%; padding:14px; margin-top:18px; font-size:17px; font-weight:800; border:0; border-radius:12px; background:var(--navy); color:#fff; cursor:pointer; }
+  .btn:disabled { opacity:.6; }
+  .msg { margin-top:10px; color:#b42318; font-weight:700; }
+  .hint { color:var(--muted); font-size:13px; margin-top:12px; }
+  /* children */
+  .kids { display:flex; gap:10px; overflow-x:auto; padding:2px 0 6px; scrollbar-width:none; }
+  .kid { display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); background:#fff; border-radius:14px; padding:8px 14px 8px 8px; cursor:pointer; flex:none; text-align:left; }
+  .kid .av { width:38px; height:38px; border-radius:50%; background:var(--gold-soft); color:var(--navy); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; }
+  .kid b { display:block; color:var(--navy); font-size:14px; }
+  .kid small { color:var(--muted); font-size:12px; }
+  .kid.on { border-color:var(--navy); background:var(--navy); }
+  .kid.on b, .kid.on small { color:#fff; }
+  .kid.on .av { background:var(--gold); }
+  /* dashboard */
+  .stats { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:12px 0; }
+  @media (min-width:640px) { .stats { grid-template-columns:repeat(4,1fr); } }
+  .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px; }
+  .stat .n { font-size:26px; font-weight:800; color:var(--navy); line-height:1.1; }
+  .stat .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  .stat.ok { border-left:4px solid var(--ok); } .stat.wait { border-left:4px solid var(--gold); } .stat.sent { border-left:4px solid var(--navy); } .stat.last { border-left:4px solid var(--maroon); }
+  .stat.last .n { font-size:17px; padding-top:5px; }
+  .latest { display:flex; gap:14px; align-items:center; background:linear-gradient(135deg,#fff 0%,var(--gold-soft) 100%); border:1px solid #edd9a1; }
+  .latest .th { width:84px; height:108px; border-radius:8px; background:#eef0f4; flex:none; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:28px; border:1px solid var(--line); }
+  .latest .th img { width:100%; height:100%; object-fit:cover; object-position:top; }
+  .latest .k { font-size:12px; font-weight:800; color:var(--maroon); text-transform:uppercase; letter-spacing:.5px; }
+  .latest .s { font-size:18px; font-weight:800; color:var(--navy); }
+  .latest .d { color:var(--muted); font-size:13px; }
+  .open { margin-top:8px; border:0; background:var(--navy); color:#fff; border-radius:10px; padding:9px 16px; font-weight:800; cursor:pointer; font-size:14px; }
+  /* filters */
+  .filters { position:sticky; top:0; z-index:5; background:var(--bg); padding:8px 0 6px; }
+  .chips { display:flex; gap:8px; overflow-x:auto; padding:2px 0 6px; scrollbar-width:none; }
+  .chips::-webkit-scrollbar, .kids::-webkit-scrollbar { display:none; }
+  .chip { flex:none; border:1.5px solid #c9cfd9; background:#fff; color:#1d2433; border-radius:20px; padding:6px 13px; font-size:13.5px; font-weight:700; cursor:pointer; }
+  .chip.on { background:var(--navy); border-color:var(--navy); color:#fff; }
+  .chip.date { position:relative; }
+  .chip input[type=date] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+  /* timeline */
+  .day { display:flex; align-items:center; gap:8px; margin:20px 0 8px; font-weight:800; color:var(--navy); }
+  .day::after { content:''; flex:1; height:2px; background:var(--gold); opacity:.7; }
+  .sub { background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px; margin:10px 0; }
+  .sub .hd { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .sub .nm { font-weight:800; color:var(--navy); font-size:16px; }
+  .badge { font-size:12px; font-weight:800; border-radius:20px; padding:3px 10px; white-space:nowrap; }
+  .badge.ok { background:var(--ok-soft); color:var(--ok); } .badge.wait { background:var(--wait-soft); color:var(--wait); }
+  .strip { display:flex; gap:10px; overflow-x:auto; margin-top:10px; padding-bottom:4px; }
+  .tile { flex:none; width:96px; cursor:pointer; border:0; background:none; padding:0; text-align:center; }
+  .tile .im { width:96px; height:124px; border-radius:10px; background:#eef0f4; border:1px solid var(--line); overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:26px; color:#9aa4b2; }
+  .tile .im img { width:100%; height:100%; object-fit:cover; object-position:top; display:block; }
+  .tile.ai .im { border:2.5px solid var(--gold); background:var(--gold-soft); }
+  .tile .cap { display:block; font-size:12px; font-weight:700; color:#374151; margin-top:4px; }
+  .tile.ai .cap { color:var(--maroon); }
+  .shimmer { background:linear-gradient(90deg,#eef0f4 25%,#f7f8fa 50%,#eef0f4 75%); background-size:200% 100%; animation:sh 1.2s infinite; }
+  @keyframes sh { to { background-position:-200% 0; } }
+  .empty { text-align:center; color:var(--muted); padding:30px 10px; }
+  .more { display:block; margin:14px auto; border:1.5px solid var(--navy); background:#fff; color:var(--navy); border-radius:12px; padding:10px 20px; font-weight:800; cursor:pointer; }
+  .top2 { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+  .link { background:none; border:0; color:var(--maroon); font-weight:800; cursor:pointer; font-size:14px; }
+  .upd { color:var(--muted); font-size:12px; }
+  /* viewer */
+  #viewer { position:fixed; inset:0; background:#121925; display:none; flex-direction:column; z-index:20; }
+  #viewer .vb { display:flex; align-items:center; gap:8px; padding:10px 12px; color:#fff; }
+  #viewer .vt { flex:1; min-width:0; } #viewer .vt b { display:block; font-size:15px; } #viewer .vt span { font-size:12px; opacity:.8; }
+  #viewer .vb button, #viewer .vb a { background:#fff; color:var(--navy); border:0; border-radius:9px; padding:8px 12px; font-weight:800; font-size:14px; text-decoration:none; cursor:pointer; }
+  #vbody { flex:1; overflow:auto; padding:8px; text-align:center; }
+  #vbody img, #vbody canvas { max-width:100%; background:#fff; margin:0 auto 10px; display:block; border-radius:4px; }
+  #vbody .load { color:#fff; padding:50px 0; }
+  .nav { position:fixed; top:50%; transform:translateY(-50%); z-index:21; border:0; background:rgba(255,255,255,.9); color:var(--navy); width:42px; height:42px; border-radius:50%; font-size:22px; font-weight:800; cursor:pointer; display:none; }
+  .nav.p { left:8px; } .nav.n { right:8px; }
+  .foot { text-align:center; color:var(--muted); font-size:12px; margin:26px 0 8px; }
+</style>
+</head>
+<body>
+<div class="banner"><img alt="ESHA School of Knowledge crest" src="data:image/webp;base64,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">
+  <div><div class="t1">ESHA</div><div class="t2">SCHOOL OF KNOWLEDGE</div></div><div class="wedge"></div></div>
+<div class="stripes"><i class="g"></i><i class="m"></i></div>
+<div class="bar"><div class="title" data-t="portal"></div>
+  <div class="lang"><button id="lnEn" class="on">English</button><button id="lnTe">తెలుగు</button></div></div>
+
+<div class="wrap">
+  <!-- LOGIN -->
+  <div id="loginBox" class="login card">
+    <h2 data-t="welcome"></h2>
+    <p data-t="sub"></p>
+    <label data-t="sid"></label>
+    <div class="row"><span class="pfx">ESK-</span><input id="sid" type="text" inputmode="numeric" maxlength="6" placeholder="1001" autocomplete="off"></div>
+    <label data-t="mob"></label>
+    <input id="mob" type="tel" inputmode="numeric" maxlength="14" placeholder="98xxxxxxxx" autocomplete="tel">
+    <button class="btn" id="go" data-t="login"></button>
+    <div class="msg" id="err"></div>
+    <div class="hint" data-t="hint"></div>
+  </div>
+
+  <!-- PORTAL -->
+  <div id="portal" style="display:none">
+    <div class="top2"><span class="upd" id="upd"></span><button class="link" id="out" data-t="logout"></button></div>
+    <div class="kids" id="kids"></div>
+    <div class="stats" id="stats"></div>
+    <div id="latest"></div>
+    <div class="filters">
+      <div class="chips" id="subChips"></div>
+      <div class="chips" id="dateChips"></div>
+    </div>
+    <div id="list"></div>
+  </div>
+  <div class="foot">ESHA School of Knowledge · Parent Portal 2026–27</div>
+</div>
+
+<div id="viewer"><div class="vb"><div class="vt"><b id="vtitle"></b><span id="vsub"></span></div><a id="vdl" download data-t="save"></a><button id="vclose" data-t="close"></button></div><div id="vbody"></div></div>
+<button class="nav p" id="vprev" aria-label="Previous">‹</button><button class="nav n" id="vnext" aria-label="Next">›</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUA6gC0C7DPK94l9e-SrOHMVg_yXR4Ft6UGJ8eP89Vlc8ULPbtHvxdTdVBoNKq0mOC/exec';
+const T = {
+  en: { portal:'Parent Portal', welcome:'Welcome, parents', sub:"See your child's homework and AI review reports.", sid:'Student ID', mob:'Registered mobile number',
+        login:'Log in', checking:'Checking…', hint:'Use the Student ID and mobile number printed on the school parent letter. Brothers and sisters with the same mobile number appear together.',
+        logout:'Log out', sent:'Homework sent (last 7 days)', ready:'AI reviews ready', waiting:'Waiting for AI review', last:'Last submitted', latest:'Latest AI review',
+        open:'Open review', allSub:'All subjects', allDates:'All dates', week:'Last 7 days', month:'This month', pick:'📅 Pick date', given:'Homework given',
+        reviewed:'AI reviewed ✓', awaiting:'Awaiting review', page:'Page', ai:'AI Review', empty:'No homework found for this selection.', noHw:'No homework uploaded yet for this child.',
+        more:'Show more', loading:'Loading…', save:'Save', close:'Close ✕', updated:'Updated', none:'—', photos:'page(s)' },
+  te: { portal:'తల్లిదండ్రుల పోర్టల్', welcome:'తల్లిదండ్రులకు స్వాగతం', sub:'మీ పిల్లల హోంవర్క్ మరియు AI రివ్యూ రిపోర్టులు చూడండి.', sid:'స్టూడెంట్ ID', mob:'రిజిస్టర్డ్ మొబైల్ నంబర్',
+        login:'లాగిన్', checking:'తనిఖీ చేస్తున్నాం…', hint:'స్కూల్ లెటర్‌లో ఉన్న స్టూడెంట్ ID మరియు మొబైల్ నంబర్ వాడండి. ఒకే మొబైల్ నంబర్ ఉన్న అన్నదమ్ములు, అక్కచెల్లెళ్లు కలిసి కనిపిస్తారు.',
+        logout:'లాగ్ అవుట్', sent:'పంపిన హోంవర్క్ (గత 7 రోజులు)', ready:'AI రివ్యూలు సిద్ధం', waiting:'AI రివ్యూ కోసం వేచి ఉన్నవి', last:'చివరిగా పంపినది', latest:'తాజా AI రివ్యూ',
+        open:'రివ్యూ తెరవండి', allSub:'అన్ని సబ్జెక్టులు', allDates:'అన్ని తేదీలు', week:'గత 7 రోజులు', month:'ఈ నెల', pick:'📅 తేదీ ఎంచుకోండి', given:'హోంవర్క్ ఇచ్చిన తేదీ',
+        reviewed:'AI రివ్యూ అయింది ✓', awaiting:'రివ్యూ కోసం వేచి ఉంది', page:'పేజీ', ai:'AI రివ్యూ', empty:'ఈ ఎంపికకు హోంవర్క్ లేదు.', noHw:'ఈ పిల్లల హోంవర్క్ ఇంకా అప్‌లోడ్ కాలేదు.',
+        more:'మరిన్ని చూపించు', loading:'లోడ్ అవుతోంది…', save:'సేవ్', close:'మూసివేయండి ✕', updated:'అప్‌డేట్', none:'—', photos:'పేజీలు' }
+};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mem = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { v==null ? localStorage.removeItem(k) : localStorage.setItem(k,v); } catch(e){} } };
+const sess = { get(){ try { return JSON.parse(sessionStorage.getItem('esha_portal')||'null'); } catch(e){ return null; } }, set(v){ try { v ? sessionStorage.setItem('esha_portal', JSON.stringify(v)) : sessionStorage.removeItem('esha_portal'); } catch(e){} } };
+let lang = mem.get('esha_lang') === 'te' ? 'te' : 'en';
+let S = null, cur = '', fSub = '', fDate = 'all', fDay = '', shown = 8, viewList = [], viewIdx = 0;
+const thumbCache = {}, thumbWait = {};
+const t = k => (T[lang][k] || T.en[k] || k);
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+function applyLang() {
+  document.body.classList.toggle('te', lang === 'te');
+  document.documentElement.lang = lang;
+  $('lnEn').classList.toggle('on', lang === 'en'); $('lnTe').classList.toggle('on', lang === 'te');
+  document.querySelectorAll('[data-t]').forEach(el => el.textContent = t(el.dataset.t));
+  if (S) render();
+}
+$('lnEn').onclick = () => { lang = 'en'; mem.set('esha_lang','en'); applyLang(); };
+$('lnTe').onclick = () => { lang = 'te'; mem.set('esha_lang','te'); applyLang(); };
+
+async function call(body) {
+  const r = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'Something went wrong');
+  return j;
+}
+const pd = d => new Date(d + 'T00:00:00');
+const fmt = (d, o) => { const x = pd(d); return isNaN(x) ? d : x.toLocaleDateString(lang === 'te' ? 'te-IN' : 'en-IN', o || { weekday:'short', day:'numeric', month:'short', year:'numeric' }); };
+const today = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
+
+$('go').onclick = async () => {
+  $('err').textContent = ''; $('go').disabled = true; $('go').textContent = t('checking');
+  try { S = await call({ action:'login', id: $('sid').value, mobile: $('mob').value }); sess.set(S); start(); }
+  catch (e) { $('err').textContent = e.message; }
+  $('go').disabled = false; $('go').textContent = t('login');
+};
+['sid','mob'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('go').click(); }));
+$('out').onclick = () => { sess.set(null); S = null; $('portal').style.display='none'; $('loginBox').style.display=''; $('sid').value=''; $('mob').value=''; window.scrollTo(0,0); };
+
+function start() {
+  $('loginBox').style.display = 'none'; $('portal').style.display = '';
+  cur = S.students[0].id; fSub = ''; fDate = 'all'; fDay = ''; shown = 8;
+  render();
+}
+
+// group a child's items into submissions: date + subject
+function groups(items) {
+  const m = {};
+  items.forEach(x => { const k = x.date + '|' + (x.subject || 'Other'); (m[k] = m[k] || { date:x.date, subject:x.subject || 'Other', ai:[], ph:[] })[x.kind === 'AI Review' ? 'ai' : 'ph'].push(x); });
+  Object.values(m).forEach(g => { g.ph.sort((a,b) => a.name.localeCompare(b.name)); g.ai.sort((a,b) => b.name.localeCompare(a.name)); });
+  return Object.values(m).sort((a,b) => (b.date + b.subject).localeCompare(a.date + a.subject) || 0).sort((a,b) => b.date.localeCompare(a.date));
+}
+function render() {
+  // children
+  $('kids').innerHTML = S.students.map(k => `<button class="kid ${k.id===cur?'on':''}" data-id="${k.id}"><span class="av">${esc((k.name||'?').trim().charAt(0))}</span><span><b>${esc(k.name)}</b><small>${esc(k.cls)} · ${k.id}</small></span></button>`).join('');
+  document.querySelectorAll('.kid').forEach(b => b.onclick = () => { cur = b.dataset.id; fSub=''; fDate='all'; fDay=''; shown=8; render(); });
+  $('upd').textContent = S.updated ? t('updated') + ': ' + S.updated : '';
+  const mine = S.items.filter(x => x.ids.includes(cur));
+  const G = groups(mine);
+  // dashboard
+  const wk = new Date(today().getTime() - 6 * 864e5);
+  const sent7 = G.filter(g => g.ph.length && pd(g.date) >= wk).length;
+  const ready = G.filter(g => g.ai.length).length;
+  const waiting = G.filter(g => g.ph.length && !g.ai.length).length;
+  const lastG = G.find(g => g.ph.length);
+  $('stats').innerHTML =
+    `<div class="stat sent"><div class="n">${sent7}</div><div class="l">${t('sent')}</div></div>` +
+    `<div class="stat ok"><div class="n">${ready}</div><div class="l">${t('ready')}</div></div>` +
+    `<div class="stat wait"><div class="n">${waiting}</div><div class="l">${t('waiting')}</div></div>` +
+    `<div class="stat last"><div class="n">${lastG ? esc(fmt(lastG.date, { day:'numeric', month:'short' })) : t('none')}</div><div class="l">${t('last')}</div></div>`;
+  const lat = G.find(g => g.ai.length);
+  if (lat) {
+    const f = lat.ai[0];
+    $('latest').innerHTML = `<div class="card latest"><div class="th" data-th="${f.fid}">🤖</div><div><div class="k">${t('latest')}</div><div class="s">${esc(lat.subject)}</div><div class="d">${t('given')}: ${esc(fmt(lat.date))}</div><button class="open" id="openLatest">${t('open')}</button></div></div>`;
+    $('openLatest').onclick = () => openView([f], 0, lat);
+  } else $('latest').innerHTML = '';
+  // filters
+  const subs = [...new Set(G.map(g => g.subject))].sort();
+  $('subChips').innerHTML = [`<button class="chip ${!fSub?'on':''}" data-s="">${t('allSub')}</button>`].concat(subs.map(s => `<button class="chip ${s===fSub?'on':''}" data-s="${esc(s)}">${esc(s)}</button>`)).join('');
+  document.querySelectorAll('#subChips .chip').forEach(b => b.onclick = () => { fSub = b.dataset.s; shown = 8; render(); });
+  const dayLabel = fDate === 'day' && fDay ? '📅 ' + fmt(fDay, { day:'numeric', month:'short' }) : t('pick');
+  $('dateChips').innerHTML = ['all','week','month'].map(k => `<button class="chip ${fDate===k?'on':''}" data-d="${k}">${t(k==='all'?'allDates':k)}</button>`).join('') +
+    `<span class="chip date ${fDate==='day'?'on':''}">${esc(dayLabel)}<input type="date" id="dpick" value="${fDay}"></span>`;
+  document.querySelectorAll('#dateChips button.chip').forEach(b => b.onclick = () => { fDate = b.dataset.d; fDay=''; shown = 8; render(); });
+  $('dpick').onchange = e => { fDay = e.target.value; fDate = fDay ? 'day' : 'all'; shown = 8; render(); };
+  // timeline
+  const now = today(), mStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const F = G.filter(g => (!fSub || g.subject === fSub) &&
+     (fDate === 'all' || (fDate === 'week' && pd(g.date) >= wk) || (fDate === 'month' && pd(g.date) >= mStart) || (fDate === 'day' && g.date === fDay)));
+  if (!G.length) { $('list').innerHTML = `<div class="empty">${t('noHw')}</div>`; observe(); return; }
+  if (!F.length) { $('list').innerHTML = `<div class="empty">${t('empty')}</div>`; observe(); return; }
+  const dates = [...new Set(F.map(g => g.date))];
+  const show = dates.slice(0, shown);
+  let h = '';
+  show.forEach(d => {
+    h += `<div class="day">${t('given')}: ${esc(fmt(d))}</div>`;
+    F.filter(g => g.date === d).forEach((g, gi) => {
+      const all = g.ai.concat(g.ph), key = d + '|' + g.subject;
+      h += `<div class="sub"><div class="hd"><span class="nm">${esc(g.subject)}</span>` +
+           (g.ai.length ? `<span class="badge ok">${t('reviewed')}</span>` : `<span class="badge wait">${t('awaiting')}</span>`) + `</div><div class="strip">` +
+           all.map((x, i) => `<button class="tile ${x.kind==='AI Review'?'ai':''}" data-g="${esc(key)}" data-i="${i}"><span class="im shimmer" data-th="${x.fid}">${x.kind==='AI Review'?'🤖':'📄'}</span><span class="cap">${x.kind==='AI Review' ? t('ai') : t('page') + ' ' + (i - g.ai.length + 1)}</span></button>`).join('') +
+           `</div></div>`;
+    });
+  });
+  if (dates.length > shown) h += `<button class="more" id="more">${t('more')}</button>`;
+  $('list').innerHTML = h;
+  const byKey = {}; F.forEach(g => byKey[g.date + '|' + g.subject] = g);
+  document.querySelectorAll('.tile').forEach(b => b.onclick = () => { const g = byKey[b.dataset.g]; openView(g.ai.concat(g.ph), +b.dataset.i, g); });
+  if ($('more')) $('more').onclick = () => { shown += 8; render(); };
+  observe();
+}
+
+// ---- thumbnails: load when visible, a few at a time ----
+let io = null, queue = [], busy = false;
+function observe() {
+  if (io) io.disconnect();
+  const els = [...document.querySelectorAll('[data-th]')];
+  els.forEach(el => { const id = el.dataset.th; if (thumbCache[id] !== undefined) paint(el, thumbCache[id]); });
+  if (!('IntersectionObserver' in window)) { els.forEach(el => want(el.dataset.th)); return; }
+  io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { want(e.target.dataset.th); io.unobserve(e.target); } }), { rootMargin:'200px' });
+  els.forEach(el => { if (thumbCache[el.dataset.th] === undefined) io.observe(el); });
+}
+function want(id) { if (thumbCache[id] !== undefined || thumbWait[id]) return; thumbWait[id] = 1; queue.push(id); pump(); }
+async function pump() {
+  if (busy || !queue.length || !S) return;
+  busy = true; const batch = queue.splice(0, 8);
+  try { const r = await call({ action:'thumbs', token:S.token, fids:batch }); batch.forEach(id => { thumbCache[id] = r.thumbs[id] || ''; }); }
+  catch (e) { batch.forEach(id => { thumbCache[id] = ''; }); if (/log in|expired/i.test(e.message)) { busy = false; $('out').click(); $('err').textContent = e.message; return; } }
+  batch.forEach(id => { delete thumbWait[id]; document.querySelectorAll(`[data-th="${id}"]`).forEach(el => paint(el, thumbCache[id])); });
+  busy = false; pump();
+}
+function paint(el, src) { el.classList.remove('shimmer'); if (src) el.innerHTML = `<img src="${src}" alt="">`; }
+
+// ---- viewer ----
+function openView(list, i, g) { viewList = list; viewIdx = i; $('viewer').style.display = 'flex'; showItem(g); }
+async function showItem(g) {
+  const x = viewList[viewIdx], multi = viewList.length > 1;
+  $('vprev').style.display = multi && viewIdx > 0 ? 'block' : 'none';
+  $('vnext').style.display = multi && viewIdx < viewList.length - 1 ? 'block' : 'none';
+  $('vtitle').textContent = (g ? g.subject + ' · ' : '') + (x.kind === 'AI Review' ? t('ai') : t('page') + ' ' + (viewIdx + 1 - viewList.filter(y => y.kind === 'AI Review').length));
+  $('vsub').textContent = g ? t('given') + ': ' + fmt(g.date) : x.name;
+  $('vbody').innerHTML = `<div class="load">${t('loading')}</div>`; $('vdl').removeAttribute('href');
+  const myIdx = viewIdx;
+  try {
+    const f = await call({ action:'file', token: S.token, fid: x.fid });
+    if (myIdx !== viewIdx) return;
+    const bin = atob(f.data), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const url = URL.createObjectURL(new Blob([bytes], { type: f.mime }));
+    $('vdl').href = url; $('vdl').download = f.name;
+    if (f.mime.indexOf('image/') === 0) { $('vbody').innerHTML = `<img src="${url}" alt="">`; return; }
+    if (f.mime === 'application/pdf' && window.pdfjsLib) {
+      const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+      $('vbody').innerHTML = '';
+      const w = Math.min(window.innerWidth - 16, 900);
+      for (let n = 1; n <= pdf.numPages; n++) {
+        if (myIdx !== viewIdx) return;
+        const page = await pdf.getPage(n), vp0 = page.getViewport({ scale: 1 });
+        const vp = page.getViewport({ scale: (w / vp0.width) * Math.min(window.devicePixelRatio || 1, 2) });
+        const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height; c.style.width = w + 'px';
+        $('vbody').appendChild(c);
+        await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+      }
+      return;
+    }
+    $('vbody').innerHTML = `<div class="load"><a style="color:#fff" href="${url}" download="${esc(f.name)}">${t('save')}</a></div>`;
+  } catch (e) {
+    if (/log in|expired/i.test(e.message)) { closeView(); $('out').click(); $('err').textContent = e.message; return; }
+    $('vbody').innerHTML = `<div class="load">${esc(e.message)}</div>`;
+  }
+}
+function closeView() { $('viewer').style.display = 'none'; $('vbody').innerHTML = ''; $('vprev').style.display = $('vnext').style.display = 'none'; }
+$('vclose').onclick = closeView;
+$('vprev').onclick = () => { if (viewIdx > 0) { viewIdx--; showItem(currentG()); } };
+$('vnext').onclick = () => { if (viewIdx < viewList.length - 1) { viewIdx++; showItem(currentG()); } };
+function currentG() { const x = viewList[0]; return { subject: x.subject || '', date: x.date }; }
+document.addEventListener('keydown', e => { if ($('viewer').style.display !== 'flex') return; if (e.key === 'Escape') closeView(); if (e.key === 'ArrowLeft') $('vprev').click(); if (e.key === 'ArrowRight') $('vnext').click(); });
+
+applyLang();
+S = sess.get(); if (S && S.students) start();
+</script>
+</body>
+</html>
