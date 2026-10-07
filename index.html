@@ -226,7 +226,7 @@ const T = {
         adminWeak:'Password must be at least 8 characters with letters and numbers.', adminMismatch:'The two passwords do not match.', adminExists:'Admin password is already set. Please log in.',
         adminTitle:'All students', todaySubs:'Homework submitted today', todayAi:'AI reviewed today', todayWait:'Waiting for AI review (today)', todayKids:'Students who submitted today',
         allClasses:'All classes', search:'Search by name or ESK ID', allBack:'← All students', waitOnly:'⏳ Waiting review', noStudents:'No students match.', showing:'Showing {n} of {m} students',
-        hwShort:'hw', notYet:'No homework yet',
+        hwShort:'hw', notYet:'No homework yet', netErr:'Network is slow. Please check your internet and try again.',
         daySubs:'Homework submitted', dayAi:'AI reviewed', dayWait:'Waiting for AI review', dayKids:'Students who submitted',
         allSubs:'Homework submitted (all days)', allAi:'AI reviewed (all days)', allWait:'Waiting for AI review', allKids:'Students with any homework',
         cls:'Class', submitted:'Submitted', waitingShort:'Waiting', allDays:'All days', today:'Today', yesterday:'Yesterday',
@@ -249,7 +249,7 @@ const T = {
         adminWeak:'పాస్‌వర్డ్ కనీసం 8 అక్షరాలు, అక్షరాలు + అంకెలతో ఉండాలి.', adminMismatch:'రెండు పాస్‌వర్డ్‌లు సరిపోలలేదు.', adminExists:'అడ్మిన్ పాస్‌వర్డ్ ఇప్పటికే ఉంది. లాగిన్ చేయండి.',
         adminTitle:'అందరు విద్యార్థులు', todaySubs:'ఈరోజు పంపిన హోంవర్క్', todayAi:'ఈరోజు AI రివ్యూ అయినవి', todayWait:'AI రివ్యూ కోసం వేచి ఉన్నవి (ఈరోజు)', todayKids:'ఈరోజు పంపిన విద్యార్థులు',
         allClasses:'అన్ని తరగతులు', search:'పేరు లేదా ESK ID తో వెతకండి', allBack:'← అందరు విద్యార్థులు', waitOnly:'⏳ రివ్యూ పెండింగ్', noStudents:'విద్యార్థులు కనబడలేదు.', showing:'{m} లో {n} విద్యార్థులు',
-        hwShort:'హోంవర్క్', notYet:'ఇంకా హోంవర్క్ లేదు',
+        hwShort:'హోంవర్క్', notYet:'ఇంకా హోంవర్క్ లేదు', netErr:'నెట్‌వర్క్ నెమ్మదిగా ఉంది. ఇంటర్నెట్ చూసి మళ్లీ ప్రయత్నించండి.',
         daySubs:'పంపిన హోంవర్క్', dayAi:'AI రివ్యూ అయినవి', dayWait:'AI రివ్యూ కోసం వేచి ఉన్నవి', dayKids:'పంపిన విద్యార్థులు',
         allSubs:'పంపిన హోంవర్క్ (అన్ని రోజులు)', allAi:'AI రివ్యూ (అన్ని రోజులు)', allWait:'AI రివ్యూ కోసం వేచి ఉన్నవి', allKids:'హోంవర్క్ పంపిన విద్యార్థులు',
         cls:'తరగతి', submitted:'పంపినవారు', waitingShort:'పెండింగ్', allDays:'అన్ని రోజులు', today:'ఈరోజు', yesterday:'నిన్న',
@@ -281,8 +281,16 @@ $('lnEn').onclick = () => { lang = 'en'; mem.set('esha_lang','en'); applyLang();
 $('lnTe').onclick = () => { lang = 'te'; mem.set('esha_lang','te'); applyLang(); };
 
 async function call(body) {
-  const r = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body) });
-  const j = await r.json();
+  // Google's reply step sometimes drops a response ("Failed to fetch"); retry quietly before giving up.
+  const tries = body.pin || body.pw ? 2 : 3;
+  let j = null;
+  for (let i = 0; i < tries && !j; i++) {
+    try {
+      const r = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body), cache:'no-store' });
+      j = await r.json();
+    } catch (e) { if (i < tries - 1) await new Promise(res => setTimeout(res, 1200 * (i + 1))); }
+  }
+  if (!j) throw new Error(t('netErr'));
   if (!j.ok) {
     const msg = j.code && T.en[j.code] ? t(j.code).replace(/\{(\w+)\}/g, (m, k) => j[k] != null ? j[k] : m) : (j.error || 'Something went wrong');
     const e = new Error(msg); e.code = j.code; throw e;
